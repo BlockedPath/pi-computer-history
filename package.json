@@ -1,0 +1,47 @@
+{
+	"name": "pi-computer-history",
+	"version": "0.1.0",
+	"description": "Pi package wrapping Cua Driver Computer History plus a small Cua action set",
+	"type": "module",
+	"license": "MIT",
+	"keywords": [
+		"pi-package",
+		"cua",
+		"computer-history"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/BlockedPath/pi-computer-history.git"
+	},
+	"files": [
+		"extensions",
+		"skills",
+		"LICENSE",
+		"README.md"
+	],
+	"scripts": {
+		"check": "tsc --noEmit"
+	},
+	"pi": {
+		"extensions": [
+			"./extensions/computer-history/index.ts"
+		],
+		"skills": [
+			"./skills"
+		]
+	},
+	"peerDependencies": {
+		"@earendil-works/pi-ai": "*",
+		"@earendil-works/pi-coding-agent": "*",
+		"@earendil-works/pi-tui": "*",
+		"typebox": "*"
+	},
+	"devDependencies": {
+		"@earendil-works/pi-ai": "^0.84.2",
+		"@earendil-works/pi-coding-agent": "^0.84.2",
+		"@earendil-works/pi-tui": "^0.84.2",
+		"@types/node": "^24.5.0",
+		"typebox": "^1.0.33",
+		"typescript": "^5.9.2"
+	}
+}
