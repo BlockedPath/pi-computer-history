@@ -2,22 +2,33 @@ import type { AutocompleteItem } from "@earendil-works/pi-tui";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { historyCli, looksLikeUnknownHistoryCommand, resolveCuaBin } from "./cua.ts";
 
-const SUBCOMMANDS = ["status", "list", "show", "enable", "pause", "resume", "disable", "delete"] as const;
-type Subcommand = (typeof SUBCOMMANDS)[number];
+export const HISTORY_SUBCOMMANDS = [
+	"status",
+	"list",
+	"show",
+	"enable",
+	"pause",
+	"resume",
+	"disable",
+	"delete",
+] as const;
+export type HistorySubcommand = (typeof HISTORY_SUBCOMMANDS)[number];
 
-function parseArgs(raw: string): { command: Subcommand; rest: string[] } | { error: string } {
+export function parseHistoryArgs(
+	raw: string,
+): { command: HistorySubcommand; rest: string[] } | { error: string } {
 	const parts = raw.trim().split(/\s+/).filter(Boolean);
 	if (parts.length === 0) return { command: "status", rest: [] };
 	const command = parts[0];
-	if (!(SUBCOMMANDS as readonly string[]).includes(command)) {
+	if (!(HISTORY_SUBCOMMANDS as readonly string[]).includes(command)) {
 		return {
-			error: `Usage: /history [${SUBCOMMANDS.join("|")}] [args]`,
+			error: `Usage: /history [${HISTORY_SUBCOMMANDS.join("|")}] [args]`,
 		};
 	}
-	return { command: command as Subcommand, rest: parts.slice(1) };
+	return { command: command as HistorySubcommand, rest: parts.slice(1) };
 }
 
-function nightlyHint(): string {
+export function nightlyHint(): string {
 	return [
 		"Computer History is a Cua Driver nightly preview.",
 		"Switch channel, update, then enable capture:",
@@ -32,14 +43,14 @@ export function registerHistoryCommand(pi: ExtensionAPI): void {
 	pi.registerCommand("history", {
 		description: "Inspect or control local Cua Computer History (user-only)",
 		getArgumentCompletions: (prefix: string): AutocompleteItem[] | null => {
-			const items = SUBCOMMANDS.filter((name) => name.startsWith(prefix)).map((name) => ({
+			const items = HISTORY_SUBCOMMANDS.filter((name) => name.startsWith(prefix)).map((name) => ({
 				value: name,
 				label: name,
 			}));
 			return items.length > 0 ? items : null;
 		},
 		handler: async (args, ctx) => {
-			const parsed = parseArgs(args);
+			const parsed = parseHistoryArgs(args);
 			if ("error" in parsed) {
 				ctx.ui.notify(parsed.error, "warning");
 				return;

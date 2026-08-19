@@ -18,21 +18,25 @@ function blockedReason(kind: "store" | "cli"): string {
 	return "Cua Computer History must go through history_status and history_query, not bash or cua-driver history.";
 }
 
-function inspectPath(value: unknown): "store" | undefined {
-	if (typeof value === "string" && isHistoryStorePath(value)) return "store";
+export function classifyHistoryBypass(
+	kind: "bash" | "path",
+	value: string,
+): "store" | "cli" | undefined {
+	if (isHistoryStorePath(value)) return "store";
+	if (kind === "bash" && HISTORY_CLI.test(value)) return "cli";
 	return undefined;
+}
+
+function inspectPath(value: unknown): "store" | undefined {
+	if (typeof value !== "string") return undefined;
+	return classifyHistoryBypass("path", value) === "store" ? "store" : undefined;
 }
 
 export function registerStoreGuard(pi: ExtensionAPI): void {
 	pi.on("tool_call", (event) => {
 		if (isToolCallEventType("bash", event)) {
-			const command = event.input.command;
-			if (isHistoryStorePath(command)) {
-				return { block: true, reason: blockedReason("store") };
-			}
-			if (HISTORY_CLI.test(command)) {
-				return { block: true, reason: blockedReason("cli") };
-			}
+			const kind = classifyHistoryBypass("bash", event.input.command);
+			if (kind) return { block: true, reason: blockedReason(kind) };
 			return undefined;
 		}
 

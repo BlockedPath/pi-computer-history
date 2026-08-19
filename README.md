@@ -16,6 +16,18 @@ pi install /path/to/pi-computer-history
 pi -e /path/to/pi-computer-history
 ```
 
+## Test
+
+Automated checks cover TypeScript and package load, plus unit tests for discovery, formatting, `/history` parsing, the store/CLI guard, and the consultation skill. They do not require a Cua daemon or the nightly channel.
+
+```bash
+cd /path/to/pi-computer-history
+npm install
+npm test
+```
+
+Interactive Cua tests (daemon, nightly history tools, continue/recent-work prompts) are still manual. See the user-command and live-tool sections below.
+
 ## Prerequisites
 
 History tools ship on the Cua Driver **nightly** channel. Stable `0.20.0` advertises the action tools but not `history_status` / `history_query`.
