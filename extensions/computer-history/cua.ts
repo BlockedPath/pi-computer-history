@@ -12,6 +12,21 @@ export const WRAPPED_TOOLS = [...HISTORY_TOOLS, ...ACTION_TOOLS] as const;
 
 export type WrappedToolName = (typeof WRAPPED_TOOLS)[number];
 
+export function advertisedWrappedTools(advertised: Set<string>): WrappedToolName[] {
+	return WRAPPED_TOOLS.filter((name) => advertised.has(name));
+}
+
+export function invalidHistoryQueryRange(params: {
+	since_sequence?: number;
+	until_sequence?: number;
+}): boolean {
+	return (
+		params.since_sequence !== undefined &&
+		params.until_sequence !== undefined &&
+		params.since_sequence > params.until_sequence
+	);
+}
+
 const DEFAULT_TIMEOUT_MS = 45_000;
 const WINDOW_STATE_TIMEOUT_MS = 60_000;
 

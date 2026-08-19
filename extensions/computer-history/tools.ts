@@ -13,6 +13,7 @@ import {
 	ACTION_TOOLS,
 	callCuaTool,
 	HISTORY_TOOLS,
+	invalidHistoryQueryRange,
 	listAdvertisedTools,
 	type WrappedToolName,
 } from "./cua.ts";
@@ -254,11 +255,7 @@ export async function discoverAndRegisterTools(
 			],
 			parameters: HistoryQueryParams,
 			async execute(_id, params, signal) {
-				if (
-					params.since_sequence !== undefined &&
-					params.until_sequence !== undefined &&
-					params.since_sequence > params.until_sequence
-				) {
+				if (invalidHistoryQueryRange(params)) {
 					return {
 						content: [
 							{
